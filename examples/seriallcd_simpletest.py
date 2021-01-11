@@ -8,7 +8,7 @@ import board
 
 uart = busio.UART(board.TX, None, baudrate=9600)
 
-disp = seriallcd.Display(uart) # Create the display object, passing in the UART.
+disp = seriallcd.Display(uart)  # Create the display object, passing in the UART.
 
-disp.set_backlight(True) # Turn on the backlight.
-disp.print("Hello CircuitPython!") # Add some text to the display
+disp.set_backlight(True)  # Turn on the backlight.
+disp.print("Hello CircuitPython!")  # Add some text to the display

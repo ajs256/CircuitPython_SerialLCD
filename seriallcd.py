@@ -16,100 +16,102 @@ Implementation Notes
 
 **Hardware:**
 
-.. todo:: Add links to any specific hardware product page(s), or category page(s). Use unordered list & hyperlink rST
-   inline format: "* `Link Text <url>`_"
+* `16x2 Parallax Serial LCD <https://www.parallax.com/product/parallax-2-x-16-serial-lcd-with-piezo-speaker-backlit/>`_
+* `20x4 Serial LCD <https://www.parallax.com/product/parallax-4-x-20-serial-lcd-with-piezospeaker-backlit/>`_
 
 **Software and Dependencies:**
 
 * Adafruit CircuitPython firmware for the supported boards:
   https://github.com/adafruit/circuitpython/releases
 
-.. todo:: Uncomment or remove the Bus Device and/or the Register library dependencies based on the library's use of either.
-
-# * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
-# * Adafruit's Register library: https://github.com/adafruit/Adafruit_CircuitPython_Register
 """
 
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/ajs256/CircuitPython_SerialLCD.git"
 
+
 def hex_to_bytes(cmd):
     return bytes([cmd])
 
+
 class Display:
-  def __init__(self, uart, *, ignore_bad_baud=False):
-      # TODO: Check if baud is okay
-      self.display_uart = uart
-      try: # Failsafe if they're using a weird serial object that doesn't have a baud rate object
-          if uart.baudrate not in [2400, 9600, 19200] and ignore_bad_baud:
-              print("WARN: Your serial object has a baud rate that the display does not support: ", baud, ". Set ignore_bad_baud to True in the constructor to silence this warning.")
-      except AttributeError:
-          pass
+    def __init__(self, uart, *, ignore_bad_baud=False):
+        self.display_uart = uart
+        try:  # Failsafe if they're using a weird serial object that doesn't have a baud rate object
+            if uart.baudrate not in [2400, 9600, 19200] and ignore_bad_baud:
+                print(
+                    "WARN: Your serial object has a baud rate that the display does not support: ",
+                    baud,
+                    ". Set ignore_bad_baud to True in the constructor to silence this warning.",
+                )
+        except AttributeError:
+            pass
 
-  # Printing
+    # Printing
 
-  def print(self, text): # Standard printing function.
-      buf = bytes(text, 'utf-8')
-      self.display_uart.write(buf)
+    def print(self, text):  # Standard printing function.
+        buf = bytes(text, "utf-8")
+        self.display_uart.write(buf)
 
-  def println(self, text): # Standard printing function, but it adds a newline at the end.
-      buf = bytes(text, 'utf-8')
-      self.display_uart.write(buf)
-      self.carriage_return()
+    def println(
+        self, text
+    ):  # Standard printing function, but it adds a newline at the end.
+        buf = bytes(text, "utf-8")
+        self.display_uart.write(buf)
+        self.carriage_return()
 
-  def write(self, data): # For sending raw data as a byte or bytes.
-      self.display_uart.write(data)
+    def write(self, data):  # For sending raw data as a byte or bytes.
+        self.display_uart.write(data)
 
-  # Cursor manipulation
+    # Cursor manipulation
 
-  def cursor_left(self):
-      self.display_uart.write(hex_to_bytes(0x08))
+    def cursor_left(self):
+        self.display_uart.write(hex_to_bytes(0x08))
 
-  def cursor_right(self):
-      self.display_uart.write(hex_to_bytes(0x09))
-  
-  def line_feed(self):
-      self.display_uart.write(hex_to_bytes(0x0a))
+    def cursor_right(self):
+        self.display_uart.write(hex_to_bytes(0x09))
 
-  def form_feed(self):
-      # Must pause 5 ms after use
-      self.display_uart.write(hex_to_bytes(0x0c))
+    def line_feed(self):
+        self.display_uart.write(hex_to_bytes(0x0A))
 
-  def clear(self): # A more user-friendly name
-      self.form_feed()
-  
-  def carriage_return(self):
-      self.display_uart.write(hex_to_bytes(0x0d))
+    def form_feed(self):
+        # Must pause 5 ms after use
+        self.display_uart.write(hex_to_bytes(0x0C))
 
-  def new_line(self): # A more user-friendly name
-      self.carriage_return()
+    def clear(self):  # A more user-friendly name
+        self.form_feed()
 
-  # Mode setting
+    def carriage_return(self):
+        self.display_uart.write(hex_to_bytes(0x0D))
 
-  def set_mode(self, cursor, blink):
-      if cursor and blink:
-          self.display_uart.write(hex_to_bytes(0x19))
-      elif cursor and not blink:
-          self.display_uart.write(hex_to_bytes(0x18))
-      elif not cursor and blink:
-          self.display_uart.write(hex_to_bytes(0x17))
-      elif not cursor and not blink:
-          self.display_uart.write(hex_to_bytes(0x16))
+    def new_line(self):  # A more user-friendly name
+        self.carriage_return()
 
-  def set_backlight(self, light):
-      if light:
-          self.display_uart.write(hex_to_bytes(0x11))
-      else:
-          self.display_uart.write(hex_to_bytes(0x12))
+    # Mode setting
 
-  # Move to a specific position
-  
-  def move_cursor(self, row, col):
-      cmd = hex_to_bytes(0x80 + (row * 0x14 + col))
-      self.display_uart.write(cmd)
+    def set_mode(self, cursor, blink):
+        if cursor and blink:
+            self.display_uart.write(hex_to_bytes(0x19))
+        elif cursor and not blink:
+            self.display_uart.write(hex_to_bytes(0x18))
+        elif not cursor and blink:
+            self.display_uart.write(hex_to_bytes(0x17))
+        elif not cursor and not blink:
+            self.display_uart.write(hex_to_bytes(0x16))
 
-  # TODO: Custom characters
+    def set_backlight(self, light):
+        if light:
+            self.display_uart.write(hex_to_bytes(0x11))
+        else:
+            self.display_uart.write(hex_to_bytes(0x12))
 
-  # TODO: Music functionality
+    # Move to a specific position
 
+    def move_cursor(self, row, col):
+        cmd = hex_to_bytes(0x80 + (row * 0x14 + col))
+        self.display_uart.write(cmd)
+
+    # TODO: Custom characters
+
+    # TODO: Music functionality
