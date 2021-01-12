@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: Unlicense
 
-import seriallcd
 import busio
 import board
+import seriallcd
 
 uart = busio.UART(board.TX, None, baudrate=9600)
 
