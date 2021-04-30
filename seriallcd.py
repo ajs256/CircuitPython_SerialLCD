@@ -31,7 +31,7 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/ajs256/CircuitPython_SerialLCD.git"
 
 
-def hex_to_bytes(cmd):
+def _hex_to_bytes(cmd):
     """
     A helper function to convert a hexadecimal byte to a bytearray.
     """
@@ -49,7 +49,7 @@ class Display:
     """
 
     def __init__(self, uart, *, ignore_bad_baud=False):
-        self.display_uart = uart
+        self._display_uart = uart
         try:  # Failsafe if they're using a weird serial object that doesn't have a baud rate object
             if uart.baudrate not in [2400, 9600, 19200] and ignore_bad_baud:
                 print(
@@ -70,7 +70,7 @@ class Display:
 
         """
         buf = bytes(text, "utf-8")
-        self.display_uart.write(buf)
+        self._display_uart.write(buf)
 
     def println(self, text):
         """
@@ -80,7 +80,7 @@ class Display:
 
         """
         buf = bytes(text, "utf-8")
-        self.display_uart.write(buf)
+        self._display_uart.write(buf)
         self.carriage_return()
 
     def write(self, data):
@@ -90,7 +90,7 @@ class Display:
         :param data: The data to write.
 
         """
-        self.display_uart.write(data)
+        self._display_uart.write(data)
 
     # Cursor manipulation
 
@@ -99,21 +99,21 @@ class Display:
         Moves the cursor left one space. This does not erase any characters.
 
         """
-        self.display_uart.write(hex_to_bytes(0x08))
+        self._display_uart.write(_hex_to_bytes(0x08))
 
     def cursor_right(self):
         """
         Moves the cursor right one space. This does not erase any characters.
 
         """
-        self.display_uart.write(hex_to_bytes(0x09))
+        self._display_uart.write(_hex_to_bytes(0x09))
 
     def line_feed(self):
         """
         Moves the cursor down one line. This does not erase any characters.
 
         """
-        self.display_uart.write(hex_to_bytes(0x0A))
+        self._display_uart.write(_hex_to_bytes(0x0A))
 
     def form_feed(self):
         """
@@ -122,7 +122,7 @@ class Display:
 
         """
         # Must pause 5 ms after use
-        self.display_uart.write(hex_to_bytes(0x0C))
+        self._display_uart.write(_hex_to_bytes(0x0C))
 
     def clear(self):
         """
@@ -136,7 +136,7 @@ class Display:
         Moves the cursor to position 0 on the next line down.
 
         """
-        self.display_uart.write(hex_to_bytes(0x0D))
+        self._display_uart.write(_hex_to_bytes(0x0D))
 
     def new_line(self):
         """
@@ -157,13 +157,13 @@ class Display:
 
         """
         if cursor and blink:
-            self.display_uart.write(hex_to_bytes(0x19))
+            self._display_uart.write(_hex_to_bytes(0x19))
         elif cursor and not blink:
-            self.display_uart.write(hex_to_bytes(0x18))
+            self._display_uart.write(_hex_to_bytes(0x18))
         elif not cursor and blink:
-            self.display_uart.write(hex_to_bytes(0x17))
+            self._display_uart.write(_hex_to_bytes(0x17))
         elif not cursor and not blink:
-            self.display_uart.write(hex_to_bytes(0x16))
+            self._display_uart.write(_hex_to_bytes(0x16))
 
     def set_backlight(self, light):
         """
@@ -173,9 +173,9 @@ class Display:
 
         """
         if light:
-            self.display_uart.write(hex_to_bytes(0x11))
+            self._display_uart.write(_hex_to_bytes(0x11))
         else:
-            self.display_uart.write(hex_to_bytes(0x12))
+            self._display_uart.write(_hex_to_bytes(0x12))
 
     def move_cursor(self, row, col):
         """
@@ -185,8 +185,8 @@ class Display:
         :param col: The column of the display to move to. Left is 0.
 
         """
-        cmd = hex_to_bytes(0x80 + (row * 0x14 + col))
-        self.display_uart.write(cmd)
+        cmd = _hex_to_bytes(0x80 + (row * 0x14 + col))
+        self._display_uart.write(cmd)
 
     # TODO: Custom characters
 
