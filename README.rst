@@ -12,6 +12,8 @@ Introduction
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
     :alt: Code Style: Black
+.. image:: https://img.shields.io/badge/maintained-sporadically-green
+    :alt: Maintained sporadically
 
 CircuitPython helper library for Parallax's serial LCDs
 
