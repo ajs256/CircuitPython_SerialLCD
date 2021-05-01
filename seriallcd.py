@@ -30,6 +30,16 @@ Implementation Notes
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/ajs256/CircuitPython_SerialLCD.git"
 
+# Definitions of constants
+CURSOR_OFF = 0b10
+CURSOR_ON = 0b00
+
+CHARACTER_BLINK = 0b01
+NO_BLINK = 0b11
+
+LIGHT_ON = 0b1
+LIGHT_OFF = 0b0
+
 
 def _hex_to_bytes(cmd):
     """
@@ -152,30 +162,37 @@ class Display:
         Set the "mode" of the display (whether to show the cursor \
         or blink the character under the cursor).
 
-        :param cursor: Whether to show the cursor.
-        :param blink: Whether to blink the character under the cursor.
+        :param cursor: Whether to show the cursor. Pass in ``seriallcd.CURSOR_ON`` \
+            or ``seriallcd.CURSOR_OFF``.
+        :param blink: Whether to blink the character under the cursor. Pass \
+            in ``seriallcd.CHARACTER_BLINK`` or ``seriallcd.NO_BLINK``
 
         """
-        if cursor and blink:
+        if cursor == CURSOR_ON and blink == CHARACTER_BLINK:
             self._display_uart.write(_hex_to_bytes(0x19))
-        elif cursor and not blink:
+        elif cursor == CURSOR_ON and blink == NO_BLINK:
             self._display_uart.write(_hex_to_bytes(0x18))
-        elif not cursor and blink:
+        elif cursor == CURSOR_OFF and blink == CHARACTER_BLINK:
             self._display_uart.write(_hex_to_bytes(0x17))
-        elif not cursor and not blink:
+        elif cursor == CURSOR_OFF and blink == NO_BLINK:
             self._display_uart.write(_hex_to_bytes(0x16))
+        else:
+            raise TypeError("Pass in constants for set_mode. See the docs.")
 
     def set_backlight(self, light):
         """
         Enables or disables the display's backlight.
 
-        :param light: Whether or not the light should be on.
+        :param light: Whether or not the light should be on. Pass in \
+            ``seriallcd.LIGHT_ON`` or ``seriallcd.LIGHT_OFF``.
 
         """
-        if light:
+        if light == LIGHT_ON:
             self._display_uart.write(_hex_to_bytes(0x11))
-        else:
+        elif light == LIGHT_OFF:
             self._display_uart.write(_hex_to_bytes(0x12))
+        else:
+            raise TypeError("Pass in constants for set_backlight. See the docs.")
 
     def move_cursor(self, row, col):
         """
@@ -212,4 +229,4 @@ class Display:
         for byte in char_bytes:
             self._display_uart.write(byte)
 
-    # TODO: Music functionality
+    # Music functionality
