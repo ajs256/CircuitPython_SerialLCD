@@ -188,6 +188,28 @@ class Display:
         cmd = _hex_to_bytes(0x80 + (row * 0x14 + col))
         self._display_uart.write(cmd)
 
-    # TODO: Custom characters
+    # Custom characters
+    def display_custom_char(self, char_id=0):
+        """
+        Display a custom character.
+        :param char_id: The ID of the character to show, from 0 to 7. Defaults to 0.
+
+        """
+        cmd = _hex_to_bytes(hex(char_id))
+        self._display_uart.write(cmd)
+
+    def set_custom_character(self, char_id, char_bytes):
+        """
+        Set a custom character.
+        :param char_id: The ID of the character to set.
+        :param bytes: An array of 8 bytes, one for each row of the display. Use 5 bits for each \
+            row. `This <https://www.quinapalus.com/hd44780udg.html>`_ is a great site - \
+            make sure to choose "Character size: 5x8".
+
+        """
+        start_char = _hex_to_bytes(0xF8 + char_id)
+        self._display_uart.write(start_char)
+        for byte in char_bytes:
+            self._display_uart.write(byte)
 
     # TODO: Music functionality
