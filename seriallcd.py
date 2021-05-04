@@ -60,7 +60,7 @@ class Display:
 
     def __init__(self, uart, *, ignore_bad_baud=False):
         self._display_uart = uart
-        try:  # Failsafe if they're using a weird serial object that doesn't have a baud rate object
+        try:  # Failsafe if they're using a weird serial object that doesn't have a baud rate attribute
             if uart.baudrate not in [2400, 9600, 19200] and ignore_bad_baud:
                 print(
                     "WARN: Your serial object has a baud rate that the display does not support: ",
