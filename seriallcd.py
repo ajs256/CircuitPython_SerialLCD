@@ -40,6 +40,34 @@ NO_BLINK = 0b11
 LIGHT_ON = 0b1
 LIGHT_OFF = 0b0
 
+# For these, I'm just using the commands that need to be output over serial to save some time.
+NOTE_1_32 = 0xD1
+NOTE_1_16 = 0xD2
+NOTE_EIGHTH = 0xD3
+NOTE_QUARTER = 0xD4
+NOTE_HALF = 0xD5
+NOTE_WHOLE = 0xD6  # 2 sec long
+
+SCALE_3 = 0xD7  # A = 220 Hz
+SCALE_4 = 0xD8  # A = 440 Hz
+SCALE_5 = 0xD9  # A = 880 Hz
+SCALE_6 = 0xDA  # A = 1760 Hz
+SCALE_7 = 0xDB  # A = 3520 Hz
+
+NOTE_A = 0xDC
+NOTE_A_SHARP = 0xDD
+NOTE_B = 0xDE
+NOTE_B_SHARP = 0xDF
+NOTE_C = 0xE0
+NOTE_C_SHARP = 0xE1
+NOTE_D = 0xE2
+NOTE_D_SHARP = 0xE3
+NOTE_E = 0xE4
+NOTE_F = 0xE5
+NOTE_F_SHARP = 0xE6
+NOTE_G = 0xE7
+NOTE_G_SHARP = 0xE8
+
 
 def _hex_to_bytes(cmd):
     """
@@ -60,7 +88,8 @@ class Display:
 
     def __init__(self, uart, *, ignore_bad_baud=False):
         self._display_uart = uart
-        try:  # Failsafe if they're using a weird serial object that doesn't have a baud rate attribute
+        try:  # Failsafe if they're using a weird serial object that doesn't
+            # have a baud rate attribute
             if uart.baudrate not in [2400, 9600, 19200] and ignore_bad_baud:
                 print(
                     "WARN: Your serial object has a baud rate that the display does not support: ",
@@ -230,3 +259,32 @@ class Display:
             self._display_uart.write(byte)
 
     # Music functionality
+
+    def set_note_length(self, length):
+        """
+        Set the length of note to play next.
+        :param length: A constant representing the length of the note to play \
+            for example, ``seriallcd.NOTE_1_16`` or ``seriallcd.NOTE_HALF``. \
+            A whole note is two seconds long.
+
+        """
+        self._display_uart.write(_hex_to_bytes(length))
+
+    def set_scale(self, scale):
+        """
+        Set the scale of the note to play next. The 4th scale is A = 440.
+        :param scale: The scale to set, in the form of a constant, like \
+            ``seriallcd.SCALE_4`` for A = 440, or ``seriallcd.SCALE_3`` \
+            for A = 220.
+
+        """
+        self._display_uart.write(_hex_to_bytes(scale))
+
+    def play_note(self, note):
+        """
+        Play a note.
+        :param note: The note to play, in the form of a constant, like \
+            ``seriallcd.NOTE_A`` or ``seriallcd.NOTE_B_SHARP``.
+
+        """
+        self._display_uart.write(_hex_to_bytes(note))
