@@ -2,7 +2,7 @@ Introduction
 ============
 
 .. image:: https://readthedocs.org/projects/circuitpython-serial-lcd/badge/?version=latest
-    :target: https://circuitpython-serial-lcd.readthedocs.io/en/latest/?badge=latest
+    :target: https://circuitpython-seriallcd.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
 .. image:: https://github.com/ajs256/CircuitPython_SerialLCD/workflows/Build%20CI/badge.svg
