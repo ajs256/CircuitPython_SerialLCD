@@ -66,7 +66,7 @@ Usage Example
 
     disp = seriallcd.Display(uart) # Create the display object, passing in the UART.
 
-    disp.set_backlight(True) # Turn on the backlight.
+    disp.set_backlight(seriallcd.LIGHT_ON) # Turn on the backlight.
     disp.print("Hello CircuitPython!") # Add some text to the display
 
 Contributing
